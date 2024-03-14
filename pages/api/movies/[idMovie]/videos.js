@@ -1,6 +1,26 @@
 import fetch from "node-fetch";
 import { ConfigService } from "../../../../services/config.service";
 
+/**
+ * @swagger
+ * /api/movies/{idMovie}/videos:
+ *  get:
+ *     description: Returns a list of the videos of a movie from The Movie Database
+ *     parameters:
+ *       - in: path
+ *         name: idMovie
+ *         required: true
+ *         type: integer
+ *         description: The id of the movie to get the videos
+ *     responses:
+ *        200:
+ *           description: A list of videos of the movie
+ *        404:
+ *           description: Not Found
+ *        405:
+ *           description: Method Not Allowed
+ * 
+ */
 export default async function handler(req, res) {
 
   const idMovie = parseInt(req.query.idMovie, 10);

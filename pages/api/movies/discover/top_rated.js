@@ -1,6 +1,18 @@
 import fetch from "node-fetch";
 import { ConfigService } from "../../../../services/config.service";
 
+/**
+ * @swagger
+ * /api/movies/discover/top_rated:
+ *  get:
+ *     description: Returns a list of the top rated movies of The Movie Database
+ *     responses:
+ *        200:
+ *           description: A list of top rated movies
+ *        405:
+ *           description: Method Not Allowed
+ * 
+ */
 export default async function handler(req, res) {
 
   const idMovie = parseInt(req.query.idMovie, 10);

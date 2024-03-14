@@ -1,5 +1,38 @@
 import clientPromise from "/lib/mongodb";
 
+/**
+ * @swagger
+ * /api/movies/{idMovie}/likes:
+ *  patch:
+ *   description: Increment the like counter of a movie
+ *   parameters:
+ *    - in: path
+ *      name: idMovie
+ *      required: true
+ *      schema:
+ *        type: integer
+ *      description: The id of the movie to increment the like counter
+ *   responses:
+ *    201:
+ *      description: The like counter incremented
+ *    405:
+ *      description: Method Not Allowed
+ *  get:
+ *    description: Returns the like counter of a movie
+ *    parameters:
+ *      - in: path
+ *        name: idMovie
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: The id of the movie to get the like counter
+ *    responses:
+ *      200:
+ *        description: The like counter of the movie
+ *      405:
+ *        description: Method Not Allowed
+ * 
+ */
 export default async function handler(req, res) {
 
   const idMovie = parseInt(req.query.idMovie, 10);

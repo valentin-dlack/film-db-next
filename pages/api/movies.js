@@ -1,6 +1,16 @@
 import fetch from "node-fetch";
 import { ConfigService } from "../../services/config.service";
 
+
+/**
+ * @swagger
+ * /api/movies:
+ *   get:
+ *     description: Returns a list of movies from The Movie Database
+ *     responses:
+ *       200:
+ *         description: A list of movies
+ */
 export default async function handler(req, res) {
     const url = ConfigService.themoviedb.urls.discover;
 

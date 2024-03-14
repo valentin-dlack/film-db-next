@@ -2,6 +2,27 @@ import fetch from "node-fetch";
 import clientPromise from "/lib/mongodb";
 import { ConfigService } from "../../../services/config.service";
 
+/**
+ * @swagger
+ * /api/movies/{idMovie}:
+ *  get:
+ *   description: Returns a movie from The Movie Database
+ *   parameters:
+ *     - in: path
+ *       name: idMovie
+ *       required: true
+ *       schema:
+ *        type: string
+ *       description: Type of sorting to use on movies list
+ *   responses:
+ *     200:
+ *       description: A movie with its details
+ *     400:
+ *       description: Bad Request
+ *     405:
+ *       description: Method Not Allowed
+ * 
+ */
 export default async function handler(req, res) {
 
   const idMovie = parseInt(req.query.idMovie, 10);

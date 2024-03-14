@@ -1,6 +1,9 @@
 import Head from "next/head";
 import clientPromise from "../lib/mongodb";
+import { useAuth } from "../src/contexts/auth.context";
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 type ConnectionStatus = {
   isConnected: boolean;
@@ -34,6 +37,16 @@ export const getServerSideProps: GetServerSideProps<
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/ui/sign-in");
+    }
+  }, [user, router]);
+
   return (
     <div className="container">
       <Head>

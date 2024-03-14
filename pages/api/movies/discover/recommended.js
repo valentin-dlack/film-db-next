@@ -1,6 +1,18 @@
 import clientPromise from "/lib/mongodb";
 import { ConfigService } from "../../../../services/config.service";
 
+/**
+ * @swagger
+ * /api/movies/discover/recommended:
+ *  get:
+ *      description: Returns a list of recommended movies based on liked movies by user
+ *      responses:
+ *          200:
+ *              description: A list of recommended movies
+ *          405:
+ *              description: Method Not Allowed
+ * 
+ */
 export default async function handler(req, res) {
 
     // 'https://api.themoviedb.org/3/movie'

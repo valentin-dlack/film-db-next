@@ -15,7 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '/src/contexts/auth.context';
+import { useAuth } from '../../src/contexts/auth.context';
 import { Alert } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
 
@@ -68,7 +68,7 @@ export default function SignIn() {
             const data = await response.json();
             login(data.userData, data.token);
 
-            //router.push('/ui/dashboard');
+            router.push('/ui/dashboard');
         } else {
             console.error('Error:', response.error);
         }

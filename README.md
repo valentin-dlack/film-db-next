@@ -15,7 +15,8 @@ Ce projet est une application cloud développée dans le cadre du cours de M1 à
 3. Dans le dossier racine du projet, exécutez la commande `npm install --force` pour installer les dépendances.
 4. Configurez les variables d'environnement nécessaires (par exemple, les clés d'accès The Movie Database, MongoDB Atlas, etc.). Vous pouvez utiliser le fichier `.env.example` comme modèle.
 5. Lancez le serveur en exécutant la commande `npm run dev` (pour le mode de développement).
-6. Accédez à l'application dans votre navigateur à l'adresse `http://localhost:3000`.
+6. Lancez les tests en exécutant la commande `npm run test`.
+7. Accédez à l'application dans votre navigateur à l'adresse `http://localhost:3000`.
 
 ## État actuel du développement
 

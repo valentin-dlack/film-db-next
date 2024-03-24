@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     await db.collection('tokens').insertOne({ token, userId: user._id });
 
     // Return the token
-    return res.status(200).json({ token });
+    return res.status(200).json({ userData: { email: user.email, id: user._id }, token });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal Server Error' });

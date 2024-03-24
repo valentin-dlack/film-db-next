@@ -4,8 +4,8 @@ Ce projet est une application cloud développée dans le cadre du cours de M1 à
 
 ## Stack technologique
 
-- Frontend : React.js
-- Backend : Node.js
+- Frontend : React.js/Next.js
+- Backend : Next.js
 - Base de données : MongoDB Atlas
 
 ## Setup et lancement du projet

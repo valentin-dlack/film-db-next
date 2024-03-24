@@ -27,7 +27,7 @@ export async function verifyToken(req, res) {
         req.headers.authorization = newToken;
       }
   
-      return Response;
+      return Response.ok;
     } catch (error) {
         switch (error.message) {
             case 'jwt must be provided':

@@ -11,12 +11,6 @@ export default function Index() {
   const { user } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!user) {
-      router.push('/ui/sign-in');
-    }
-  }, [user, router]);
-
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4 }}>

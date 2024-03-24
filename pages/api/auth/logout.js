@@ -4,7 +4,7 @@ import clientPromise from "/lib/mongodb";
 
 export default async function handler(req, res) {
     //logout
-    if (req.method !== 'POST') {
+    if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
     if (req.headers.authorization) {
@@ -17,7 +17,8 @@ export default async function handler(req, res) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             await db.collection('tokens').deleteOne({ token, userId: decoded.userId });
 
-            return res.status(200).json({ message: 'Logged out' });
+            //redirect to sign in
+            return res.redirect('/ui/sign-in');
         } catch (error) {
             return res.status(500).json({ message: 'Internal Server Error' });
         }

@@ -12,7 +12,16 @@ import { ConfigService } from "../../services/config.service";
  *         description: A list of movies
  */
 export default async function handler(req, res) {
-    const url = ConfigService.themoviedb.urls.discover;
+    let url = ConfigService.themoviedb.urls.discover;
+
+    // get params in url query
+    const page = req.query.page;
+
+    page ? url += `?page=${page}` : url += `?page=1`;
+
+    if (ConfigService.themoviedb.apiToken === "") {
+        return res.status(500).json({ status: 500, error: "Internal Server Error" });
+    }
 
     const options = {
         method: "GET",
@@ -25,8 +34,7 @@ export default async function handler(req, res) {
     const apiResponse = await fetch(url, options)
         .then(response => response.json())
         .catch(error => {
-            console.error(error);
-            return null;
+            return res.status(500).json({ status: 500, error: "Internal Server Error" });
         });
 
     if (apiResponse) {

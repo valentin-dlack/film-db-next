@@ -1,6 +1,6 @@
-import handler from '../../pages/api/discover';
+import handler from '../../pages/api/movies';
 import fetch from 'node-fetch';
-import { ConfigService } from '../../src/services/config.service';
+import { ConfigService } from '../../services/config.service';
 
 jest.mock('node-fetch');
 
@@ -21,7 +21,11 @@ describe('API Handler for Discover', () => {
       json: jest.fn().mockResolvedValue(mockData)
     });
 
-    const req = {};
+    const req = {
+        query: {
+            page: 1
+        }
+    };
     const res = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis()
@@ -36,7 +40,11 @@ describe('API Handler for Discover', () => {
   it('should handle network errors', async () => {
     fetch.mockRejectedValueOnce(new Error('Network Error'));
 
-    const req = {};
+    const req = {
+        query: {
+            page: 1
+        }
+    };
     const res = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis()
@@ -49,9 +57,14 @@ describe('API Handler for Discover', () => {
   });
 
   it('should handle errors in configuration', async () => {
-    jest.replaceProperty(ConfigService.themoviedb.keys, 'API_TOKEN', jest.fn().mockReturnValue('MY_API_TOKEN_VALUE'));
+    // remove the API token
+    ConfigService.themoviedb.apiToken = '';
 
-    const req = {};
+    const req = {
+        query: {
+            page: 1
+        }
+    };
     const res = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis()

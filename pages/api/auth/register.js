@@ -2,6 +2,47 @@ import { ConfigService } from "../../../services/config.service";
 import clientPromise from "/lib/mongodb";
 import * as argon2 from "argon2";
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *  post:
+ *   tags:
+ *    - auth
+ *   description: Register a new user to the application
+ *   parameters:
+ *        - in: body
+ *          name: email
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The email of the user
+ *        - in: body
+ *          name: password
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The password of the user
+ *        - in: body
+ *          name: firstName
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The first name of the user
+ *        - in: body
+ *          name: lastName
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The last name of the user
+ *   responses:
+ *     200:
+ *       description: The user is signed in
+ *     400:
+ *        description: User already exists
+ *     405:
+ *       description: Method Not Allowed
+ * 
+ */
 export default async function handler(req, res) {
   if (req.method === "POST") {
     // Handle registration

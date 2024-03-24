@@ -2,6 +2,35 @@ import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import clientPromise from "/lib/mongodb";
 
+/**
+ * @swagger
+ * /api/auth/sign-in:
+ *  post:
+ *   tags:
+ *    - auth
+ *   description: Sign in to the application
+ *   parameters:
+ *        - in: body
+ *          name: email
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The email of the user
+ *        - in: body
+ *          name: password
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The password of the user
+ *   responses:
+ *     200:
+ *       description: The user is signed in
+ *     401:
+ *        description: Unauthorized or invalid credentials
+ *     405:
+ *       description: Method Not Allowed
+ * 
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });

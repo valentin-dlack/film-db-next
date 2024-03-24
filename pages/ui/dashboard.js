@@ -17,6 +17,7 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import { useAuth } from '../../src/contexts/auth.context';
 import { useRouter } from 'next/router';
+import { CardMedia } from '@mui/material';
 
 function Copyright(props) {
   return (
@@ -30,46 +31,6 @@ function Copyright(props) {
     </Typography>
   );
 }
-
-const tiers = [
-  {
-    title: 'Free',
-    price: '0',
-    description: [
-      '10 users included',
-      '2 GB of storage',
-      'Help center access',
-      'Email support',
-    ],
-    buttonText: 'Sign up for free',
-    buttonVariant: 'outlined',
-  },
-  {
-    title: 'Pro',
-    subheader: 'Most popular',
-    price: '15',
-    description: [
-      '20 users included',
-      '10 GB of storage',
-      'Help center access',
-      'Priority email support',
-    ],
-    buttonText: 'Get started',
-    buttonVariant: 'contained',
-  },
-  {
-    title: 'Enterprise',
-    price: '30',
-    description: [
-      '50 users included',
-      '30 GB of storage',
-      'Help center access',
-      'Phone & email support',
-    ],
-    buttonText: 'Contact us',
-    buttonVariant: 'outlined',
-  },
-];
 
 const footers = [
   {
@@ -99,13 +60,37 @@ const footers = [
 export default function Dashboard() {
 
     const { user, loading } = useAuth();
+    const [movies, setMovies] = React.useState([]);
+    const [page, setPage] = React.useState(1);
     const router = useRouter();
 
     React.useEffect(() => {
         if (!loading && !user) {
             router.push('/ui/sign-in');
         }
+
+        if (!loading && user) {
+          fetch('/api/movies')
+          .then(response => response.json())
+          .then(data => {
+            setMovies(data.data);
+          }).catch(err => {
+            console.error(err);
+          });
+        }
     }, [user, loading, router]);
+
+    const loadMore = () => {
+      fetch('/api/movies?page=' + (page + 1))
+      .then(response => response.json())
+      .then(data => {
+        setMovies([...movies, ...data.data]);
+      }).catch(err => {
+        console.error(err);
+      });
+
+      setPage(page + 1);
+    }
 
   return (
     <ThemeProvider theme={createTheme()}>
@@ -119,29 +104,11 @@ export default function Dashboard() {
       >
         <Toolbar sx={{ flexWrap: 'wrap' }}>
           <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-            You are logged in as {user?.email}
+            {user ? `Welcome, ${user.email} !` : 'Welcome, you are not logged in.'}
           </Typography>
-          <nav>
-            <Link
-              variant="button"
-              color="text.primary"
-              href="#"
-              sx={{ my: 1, mx: 1.5 }}
-            >
-              Features
-            </Link>
-            <Link
-              variant="button"
-              color="text.primary"
-              href="#"
-              sx={{ my: 1, mx: 1.5 }}
-            >
-              Enterprise
-            </Link>
-          </nav>
           {user && (
             <Button
-              href="#"
+              href="/api/auth/logout"
               color="primary"
               variant="outlined"
               sx={{ my: 1, mx: 1.5 }}
@@ -170,79 +137,47 @@ export default function Dashboard() {
           color="text.primary"
           gutterBottom
         >
-          Pricing
-        </Typography>
-        <Typography variant="h5" align="center" color="text.secondary" component="p">
-          Quickly build an effective pricing table for your potential customers with
-          this layout. It&apos;s built with default MUI components with little
-          customization.
+          Recent movies
         </Typography>
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
-        <Grid container spacing={5} alignItems="flex-end">
-          {tiers.map((tier) => (
-            // Enterprise card is full width at sm breakpoint
-            <Grid
-              item
-              key={tier.title}
-              xs={12}
-              sm={tier.title === 'Enterprise' ? 12 : 6}
-              md={4}
-            >
-              <Card>
-                <CardHeader
-                  title={tier.title}
-                  subheader={tier.subheader}
-                  titleTypographyProps={{ align: 'center' }}
-                  action={tier.title === 'Pro' ? <StarIcon /> : null}
-                  subheaderTypographyProps={{
-                    align: 'center',
-                  }}
-                  sx={{
-                    backgroundColor: (theme) =>
-                      theme.palette.mode === 'light'
-                        ? theme.palette.grey[200]
-                        : theme.palette.grey[700],
-                  }}
+        <Grid container spacing={5} alignItems="flex-start">
+          {movies.map((movie) => (
+            <Grid item key={movie.id} xs={12} sm={6} md={4}>
+              <Card
+                sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+              >
+                <CardMedia 
+                  component="img"
+                  image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
                 />
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'baseline',
-                      mb: 2,
-                    }}
-                  >
-                    <Typography component="h2" variant="h3" color="text.primary">
-                      ${tier.price}
-                    </Typography>
-                    <Typography variant="h6" color="text.secondary">
-                      /mo
-                    </Typography>
-                  </Box>
-                  <ul>
-                    {tier.description.map((line) => (
-                      <Typography
-                        component="li"
-                        variant="subtitle1"
-                        align="center"
-                        key={line}
-                      >
-                        {line}
-                      </Typography>
-                    ))}
-                  </ul>
+                <CardHeader
+                  title={movie.title}
+                  subheader={movie.release_date}
+                  titleTypographyProps={{ align: 'center' }}
+                  subheaderTypographyProps={{ align: 'center' }}
+                  sx={{ pb: 0 }}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography align="center" color="text.secondary" paragraph>
+                    {movie.overview}
+                  </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant}>
-                    {tier.buttonText}
+                  <Button size="small" color="primary">
+                    View
                   </Button>
                 </CardActions>
               </Card>
             </Grid>
           ))}
+          <Grid item xs={12} sm={3}>
+            <Button variant="outlined" color="primary" onClick={loadMore}>
+              View more
+            </Button>
+          </Grid>
         </Grid>
       </Container>
       {/* Footer */}

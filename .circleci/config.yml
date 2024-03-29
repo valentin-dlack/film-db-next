@@ -1,0 +1,121 @@
+# .circleci/config.yml
+version: 2.1
+
+orbs:
+  node: circleci/node@5
+
+jobs:
+  build:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Building things..."
+
+  unit-tests:
+    executor: node/default
+    environment:
+      JEST_JUNIT_OUTPUT_DIR: ./test-results/
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          command: npm install jest-junit
+      - run:
+          name: Run tests
+          command: npm run test:ci
+      - store_test_results:
+          path: ./test-results/
+
+  deploy_main:
+    executor: node/default
+    steps:
+      - checkout
+      - run:
+          name: Prepare Deployment Environment (Main)
+          command: |
+            # Script for preparing deployment environment on main branch
+            echo "Preparing deployment environment for main branch..."
+      - run:
+          name: Deploy Application (Main)
+          command: |
+            # Script for deploying application on main branch
+            echo "Deploying application for main branch..."
+      - run:
+          name: Verification Tests (Main)
+          command: |
+            # Script for verification tests on main branch
+            echo "Running verification tests for main branch..."
+      - run:
+          name: Functional Validation Tests (Main)
+          command: |
+            # Script for functional validation tests on main branch
+            echo "Running functional validation tests for main branch..."
+      - run:
+          name: Load Tests (Main)
+          command: |
+            # Script for load tests on main branch
+            echo "Running load tests for main branch..."
+      - run:
+          name: Monitoring and Tracking (Main)
+          command: |
+            # Script for monitoring and tracking on main branch
+            echo "Monitoring and Tracking for main branch..."
+
+  deploy_develop:
+    executor: node/default
+    steps:
+      - checkout
+      - run:
+          name: Prepare Deployment Environment (Develop)
+          command: |
+            # Script for preparing deployment environment on develop branch
+            echo "Preparing deployment environment for develop branch..."
+      - run:
+          name: Deploy Application (Develop)
+          command: |
+            # Script for deploying application on develop branch
+            echo "Deploying application for develop branch..."
+      - run:
+          name: Verification Tests (Develop)
+          command: |
+            # Script for verification tests on develop branch
+            echo "Running verification tests for develop branch..."
+      - run:
+          name: Functional Validation Tests (Develop)
+          command: |
+            # Script for functional validation tests on develop branch
+            echo "Running functional validation tests for develop branch..."
+      - run:
+          name: Load Tests (Develop)
+          command: |
+            # Script for load tests on develop branch
+            echo "Running load tests for develop branch..."
+      - run:
+          name: Monitoring and Tracking (Develop)
+          command: |
+            # Script for monitoring and tracking on develop branch
+            echo "Monitoring and Tracking for develop branch..."
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build
+      - unit-tests:
+          requires:
+            - build
+      - deploy_main:
+          requires:
+            - unit-tests
+          filters:
+            branches:
+              only:
+                - main
+      - deploy_develop:
+          requires:
+            - unit-tests
+          filters:
+            branches:
+              only:
+                - develop

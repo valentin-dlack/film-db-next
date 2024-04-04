@@ -1,4 +1,4 @@
-import clientPromise from "/lib/mongodb";
+import clientPromise from "../../../../lib/mongodb";
 
 /**
  * @swagger
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
            { $inc: { likeCounter : 1 } }
          )
          data = {
-           action: 'likeCounter incremented',
+           action: 'likeCounter updated',
            idMovie: idMovie,
            matchedCount: resMongo.matchedCount,
            modifiedCount: resMongo.modifiedCount

@@ -2,7 +2,7 @@ import handler from "../../pages/api/movies/[idMovie]/likes";
 import { createMocks } from "node-mocks-http";
 import * as mongodb from "../../lib/mongodb.ts";
 
-jest.mock("../../lib/mongodb", () => ({
+jest.mock("../../lib/mongodb.ts", () => ({
     __esModule: true,
     default: {
         db: jest.fn(() => ({

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import clientPromise from "/lib/mongodb";
+import clientPromise from "../../lib/mongodb";
 import { ObjectId } from 'mongodb';
 
 export async function verifyToken(req, res) {

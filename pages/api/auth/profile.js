@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     // Check if the user is authorized
     const userData = await verifyToken(req, res);
 
-    console.log('userId', userData.userId);
+    console.log('userId', userData);
 
     //get user profile
     const client = await clientPromise;

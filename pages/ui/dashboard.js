@@ -61,6 +61,7 @@ export default function Dashboard() {
 
     const { user, loading } = useAuth();
     const [movies, setMovies] = React.useState([]);
+    const [likedMovies, setLikedMovies] = React.useState([]);
     const [page, setPage] = React.useState(1);
     const router = useRouter();
 
@@ -70,10 +71,31 @@ export default function Dashboard() {
         }
 
         if (!loading && user) {
+          const token = localStorage.getItem('token');
           fetch('/api/movies')
           .then(response => response.json())
           .then(data => {
             setMovies(data.data);
+            fetch('/api/movies/likes', {
+              headers: {
+                'Authorization': token
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              setLikedMovies(data.data.likes);
+              /*{
+                "likes": [
+                  {
+                    "_id": "6616aeaad4ae33c912225642",
+                    "idTMDB": 1011985,
+                    "userId": "65f2f9b7ef70e626e4dc11c8"
+                  }
+                ]
+              }*/
+            }).catch(err => {
+              console.error(err);
+            });
           }).catch(err => {
             console.error(err);
           });
@@ -90,6 +112,27 @@ export default function Dashboard() {
       });
 
       setPage(page + 1);
+    }
+
+    const handleLike = (idMovie) => {
+      fetch(`/api/movies/${idMovie}/likes`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${localStorage.getItem('token')}`
+        }
+      }).then(response => response.json())
+      .then(data => {
+        data = data.data;
+        console.log(data.action);
+        if (data.action === 'likeCounter deleted') {
+          setLikedMovies(likedMovies.filter(movie => movie.idTMDB !== idMovie));
+        } else {
+          setLikedMovies([...likedMovies, idMovie]);
+        }
+      }).catch(err => {
+        console.error(err);
+      });
     }
 
   return (
@@ -143,8 +186,8 @@ export default function Dashboard() {
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
         <Grid container spacing={5} alignItems="flex-start">
-          {movies.map((movie) => (
-            <Grid item key={movie.id} xs={12} sm={6} md={4}>
+          {movies.map((movie, index) => (
+            <Grid item key={movie.id} xs={12} sm={6} md={4} id={movie.id}>
               <Card
                 sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
               >
@@ -166,9 +209,9 @@ export default function Dashboard() {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" color="primary">
-                    View
-                  </Button>
+                <Button size="small" color="primary" onClick={() => handleLike(movie.id)}>
+                  {likedMovies.some(likedMovie => likedMovie.idTMDB == movie.id) ? 'Unlike' : 'Like'}
+                </Button>
                 </CardActions>
               </Card>
             </Grid>

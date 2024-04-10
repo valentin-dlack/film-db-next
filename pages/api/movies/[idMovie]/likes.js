@@ -1,4 +1,5 @@
 import clientPromise from "../../../../lib/mongodb";
+import { verifyToken } from "../../../../src/middleware/verifyToken";
 
 /**
  * @swagger
@@ -36,6 +37,11 @@ import clientPromise from "../../../../lib/mongodb";
 export default async function handler(req, res) {
 
   const idMovie = parseInt(req.query.idMovie, 10);
+  const userData = await verifyToken(req, res);
+  if (!userData) {
+    return res.status(401).json({ status: 401, error: "Unauthorized" });
+  }
+  const userId = userData.userId
 
   const client = await clientPromise;
   const db = client.db("ynov-cloud");
@@ -44,28 +50,26 @@ export default async function handler(req, res) {
 
     case "PATCH":
 
-      const like = await db.collection("likes").findOne({idTMDB: idMovie});
+      const like = await db.collection("likes").findOne({idTMDB: idMovie, userId: userId});
       let resMongo, data;
 
       if (like) {
-         resMongo = await db.collection("likes").updateOne(
-           {idTMDB: idMovie},
-           { $inc: { likeCounter : 1 } }
-         )
+         resMongo = await db.collection("likes").deleteOne({idTMDB: idMovie, userId: userId});
          data = {
-           action: 'likeCounter updated',
+           action: 'likeCounter deleted',
            idMovie: idMovie,
-           matchedCount: resMongo.matchedCount,
-           modifiedCount: resMongo.modifiedCount
+           userId: userId,
+           deletedCount: resMongo.deletedCount
          }
-         res.status(201).json({ status: 201, data: data });
+         res.status(200).json({ status: 200, data: data });
       } else {
         resMongo = await db.collection("likes").insertOne(
-          {idTMDB: idMovie, likeCounter: 0}
+          {idTMDB: idMovie, userId: userId}
         )
         data = {
           action: 'likeCounter created',
           idMovie: idMovie,
+          userId: userId,
           insertedId: resMongo.insertedId
         }
         res.status(201).json({ status: 201, data: data });
@@ -75,7 +79,7 @@ export default async function handler(req, res) {
 
     case "GET":
 
-      const likes = await db.collection("likes").findOne({idTMDB: idMovie});
+      const likes = await db.collection("likes").findOne({idTMDB: idMovie, userId: userId});
       res.json({ status: 200, data: { likes: likes } });
       break;
 

@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 
 export async function verifyToken(req, res) {
     const token = req.headers.authorization;
+    //console.log('token', token);
   
     try {
         // Connect to MongoDB
@@ -26,8 +27,7 @@ export async function verifyToken(req, res) {
         await db.collection('tokens').updateOne({ userId: decoded.userId, token }, { $set: { token: newToken } });
         req.headers.authorization = newToken;
       }
-  
-      return { userId: decoded.userId }.ok;
+      return { userId: decoded.userId };
     } catch (error) {
         switch (error.message) {
             case 'jwt must be provided':

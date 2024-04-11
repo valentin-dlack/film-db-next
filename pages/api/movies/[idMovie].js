@@ -46,14 +46,10 @@ export default async function handler(req, res) {
       .then(r => r.json())
       .catch(err => console.error('error:' + err));
 
-      const likes = await db.collection("likes").findOne({idTMDB: idMovie});
-
-      if (likes && likes.likeCounter) {
-        movie.likes = likes.likeCounter;
-      } else {
-        movie.likes = 0;
+      const likes = await db.collection("likes").find({ idTMDB: idMovie }).toArray();
+      if (likes) {
+        movie.likes = likes.length;
       }
-
       if (movie) {
         res.json({ status: 200, data: { movie: movie } });
       } else {

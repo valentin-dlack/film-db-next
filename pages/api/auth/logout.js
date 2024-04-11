@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
-    if (req.headers.authorization) {
+    if (req.headers.Authorization) {
         // Connect to MongoDB
         const client = await clientPromise;
         const db = client.db("ynov-cloud");
@@ -22,6 +22,7 @@ export default async function handler(req, res) {
         } catch (error) {
             return res.status(500).json({ message: 'Internal Server Error' });
         }
+    } else {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
-    return res.status(401).json({ message: 'Unauthorized' });
 }

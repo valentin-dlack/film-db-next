@@ -57,12 +57,11 @@ const footers = [
   },
 ];
 
-export default function Dashboard() {
+export default function LikedFilms() {
 
     const { user, loading } = useAuth();
-    const [movies, setMovies] = React.useState([]);
     const [likedMovies, setLikedMovies] = React.useState([]);
-    const [page, setPage] = React.useState(1);
+    const [loadingMovies, setLoadingMovies] = React.useState(true);
     const router = useRouter();
 
     React.useEffect(() => {
@@ -72,69 +71,21 @@ export default function Dashboard() {
 
         if (!loading && user) {
           const token = localStorage.getItem('token');
-          fetch('/api/movies')
+          setLoadingMovies(true);
+          fetch('/api/movies/liked-details', {
+            headers: {
+              'Authorization': token
+            }
+          })
           .then(response => response.json())
           .then(data => {
-            setMovies(data.data);
-            fetch('/api/movies/likes', {
-              headers: {
-                'Authorization': token
-              }
-            })
-            .then(response => response.json())
-            .then(data => {
-              setLikedMovies(data.data.likes);
-              /*{
-                "likes": [
-                  {
-                    "_id": "6616aeaad4ae33c912225642",
-                    "idTMDB": 1011985,
-                    "userId": "65f2f9b7ef70e626e4dc11c8"
-                  }
-                ]
-              }*/
-            }).catch(err => {
-              console.error(err);
-            });
+            setLikedMovies(data.data.movies);
+            setLoadingMovies(false);
           }).catch(err => {
             console.error(err);
           });
         }
     }, [user, loading, router]);
-
-    const loadMore = () => {
-      fetch('/api/movies?page=' + (page + 1))
-      .then(response => response.json())
-      .then(data => {
-        setMovies([...movies, ...data.data]);
-      }).catch(err => {
-        console.error(err);
-      });
-
-      setPage(page + 1);
-    }
-
-    const handleLike = (idMovie) => {
-      fetch(`/api/movies/${idMovie}/likes`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `${localStorage.getItem('token')}`
-        }
-      }).then(response => response.json())
-      .then(data => {
-        data = data.data;
-        console.log(data.action);
-        if (data.action === 'likeCounter deleted') {
-          setLikedMovies(likedMovies.filter(movie => movie.idTMDB !== idMovie));
-        }
-        if (data.action === 'likeCounter created') {
-          setLikedMovies([...likedMovies, {idTMDB: idMovie}]);
-        }
-      }).catch(err => {
-        console.error(err);
-      });
-    }
 
   return (
     <ThemeProvider theme={createTheme()}>
@@ -151,11 +102,11 @@ export default function Dashboard() {
             {user ? `Welcome, ${user.email} !` : 'Welcome, you are not logged in.'}
           </Typography>
           <Button
-              href="/ui/liked-movies"
+              href="/ui/dashboard"
               color="primary"
               variant="outlined"
               sx={{ my: 1, mx: 1.5 }}
-            >My liked movies</Button>
+            >Dashboard</Button>
           {user && (
             <Button
               href="/api/auth/logout"
@@ -187,13 +138,13 @@ export default function Dashboard() {
           color="text.primary"
           gutterBottom
         >
-          Recent movies
+          Liked movies
         </Typography>
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
         <Grid container spacing={5} alignItems="flex-start">
-          {movies.map((movie, index) => (
+          {!loading && likedMovies.map((movie) => (
             <Grid item key={movie.id} xs={12} sm={6} md={4} id={movie.id}>
               <Card
                 sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
@@ -216,9 +167,6 @@ export default function Dashboard() {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                <Button size="small" color="primary" onClick={() => handleLike(movie.id)}>
-                  {likedMovies.some(likedMovie => likedMovie.idTMDB == movie.id) ? 'Unlike' : 'Like'}
-                </Button>
                 <Button size="small" color="primary" href={`/ui/${movie.id}/details`}>
                   View
                 </Button>
@@ -226,11 +174,6 @@ export default function Dashboard() {
               </Card>
             </Grid>
           ))}
-          <Grid item xs={12} sm={3}>
-            <Button variant="outlined" color="primary" onClick={loadMore}>
-              View more
-            </Button>
-          </Grid>
         </Grid>
       </Container>
       {/* Footer */}

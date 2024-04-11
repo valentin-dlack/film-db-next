@@ -19,6 +19,24 @@ export function AuthProvider({ children }) {
 
   // Simulating user loading, you need to replace this with actual logic to load user
   useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      fetch('/api/auth/profile', {
+        headers: {
+          Authorization: token,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUser(data);
+          setLoading(false); // Set loading to false after user is loaded
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false); // Set loading to false after error
+        });
+    }
     setTimeout(() => {
       setLoading(false); // Set loading to false after a certain time (simulating user loading)
     }, 1000);

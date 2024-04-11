@@ -21,6 +21,7 @@ export async function verifyToken(req, res) {
   
       // Regenerate the token if it's expired
       if (jwt.decode(token).exp < Date.now() / 1000) {
+        console.log('Token expired');
         const newToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_SECRET, {
           expiresIn: '1h',
         });

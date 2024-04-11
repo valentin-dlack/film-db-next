@@ -41,6 +41,7 @@ export default function SignIn() {
     const router = useRouter();
 
     const { registered } = router.query;
+    const [error, setError] = React.useState(null);
 
     useEffect(() => {
         if (user) {
@@ -71,6 +72,7 @@ export default function SignIn() {
             router.push('/ui/dashboard');
         } else {
             console.error('Error:', response.error);
+            setError('Invalid credentials');
         }
     } catch (error) {
         console.error('Error:', error);
@@ -126,6 +128,11 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+            {error && (
+                <Alert severity="error">
+                    {error}
+                </Alert>
+            )}
             <Button
               type="submit"
               fullWidth
